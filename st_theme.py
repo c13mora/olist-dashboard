@@ -701,29 +701,33 @@ def chart_card(title: str, fig: go.Figure, subtitle: str = "", key: str | None =
     t = brand["theme"]
 
     with st.container(border=True):
-        # Title lives inside the Plotly figure so it persists in fullscreen mode.
-        # Subtitle is rendered as a smaller, muted second line via Plotly HTML.
-        title_text = f"<b>{title}</b>"
+        # Title and subtitle as a Plotly annotation — part of the figure, so
+        # they survive fullscreen. Positioned in the top margin above the plot
+        # area (paper y=1, yanchor="bottom"), giving full HTML styling control
+        # independent of Plotly's built-in title system.
+        annotation_text = f"<b>{title}</b>"
         if subtitle:
-            title_text += (
+            annotation_text += (
                 f"<br><span style='font-size:11px;font-weight:400;"
                 f"color:{t['text_muted']};'>{subtitle}</span>"
             )
 
         fig.update_layout(
-            title=dict(
-                text=title_text,
-                x=0,
-                xanchor="left",
-                yanchor="top",
-                font=dict(
-                    size=14,
-                    color=t["text_primary"],
-                    family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                ),
-                pad=dict(l=4, t=4),
+            title=dict(text=""),                    # clear any built-in title
+            margin=dict(t=60 if subtitle else 44),  # headroom for annotation
+        )
+        fig.add_annotation(
+            text=annotation_text,
+            x=0, y=1,
+            xref="paper", yref="paper",
+            xanchor="left", yanchor="bottom",
+            showarrow=False,
+            font=dict(
+                size=14,
+                color=t["text_primary"],
+                family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             ),
-            margin=dict(t=60 if subtitle else 44),
+            align="left",
         )
         st.plotly_chart(fig, use_container_width=True, key=key)
 
