@@ -701,20 +701,30 @@ def chart_card(title: str, fig: go.Figure, subtitle: str = "", key: str | None =
     t = brand["theme"]
 
     with st.container(border=True):
-        # Title + optional subtitle as HTML — outside Plotly for consistent typography
-        header_html = (
-            f'<p style="font-size:0.875rem;font-weight:600;color:{t["text_primary"]};'
-            f'margin:0 0 0.1rem 0;letter-spacing:-0.01em;line-height:1.3;">{title}</p>'
-        )
+        # Title lives inside the Plotly figure so it persists in fullscreen mode.
+        # Subtitle is rendered as a smaller, muted second line via Plotly HTML.
+        title_text = f"<b>{title}</b>"
         if subtitle:
-            header_html += (
-                f'<p style="font-size:0.72rem;color:{t["text_muted"]};'
-                f'margin:0 0 0.25rem 0;line-height:1.4;">{subtitle}</p>'
+            title_text += (
+                f"<br><span style='font-size:11px;font-weight:400;"
+                f"color:{t['text_muted']};'>{subtitle}</span>"
             )
-        st.markdown(header_html, unsafe_allow_html=True)
 
-        # Remove Plotly's own title; tighten top margin now that title lives outside
-        fig.update_layout(title=None, margin=dict(t=8))
+        fig.update_layout(
+            title=dict(
+                text=title_text,
+                x=0,
+                xanchor="left",
+                yanchor="top",
+                font=dict(
+                    size=14,
+                    color=t["text_primary"],
+                    family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                ),
+                pad=dict(l=4, t=4),
+            ),
+            margin=dict(t=60 if subtitle else 44),
+        )
         st.plotly_chart(fig, use_container_width=True, key=key)
 
 
