@@ -1,0 +1,49 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# brand.toml  ·  Client brand configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# Drop this file in the project root and edit values to fully re-skin the
+# dashboard for a new client. No code changes required.
+#
+# Workflow for a new client:
+#   1. Copy this file to the new project root.
+#   2. Edit [brand], [colors], and [theme] below.
+#   3. Update .streamlit/config.toml primaryColor to match [colors].primary.
+#   4. Update NAV_PAGES in st_theme.py if the page structure differs.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[brand]
+name            = "Olist Analytics"
+tagline         = "Brazilian E-Commerce Intelligence"
+logo_path       = "assets/logo.png"
+currency_symbol = "R$"
+
+# ─── Color palette ───────────────────────────────────────────────────────────
+# primary  · Brand accent — nav highlight, card left-border, primary CTA
+# accent   · Secondary highlight (teal/green)
+# positive · Upward deltas, good-performance indicators
+# negative · Downward deltas, alerts
+# warning  · Caution indicators, secondary data series
+# series   · Ordered palette for multi-series charts (first = most important)
+
+[colors]
+primary  = "#6366F1"
+accent   = "#818CF8"
+positive = "#10B981"
+negative = "#F43F5E"
+warning  = "#F59E0B"
+series   = ["#6366F1", "#10B981", "#F59E0B", "#EC4899", "#06B6D4", "#8B5CF6"]
+
+# ─── Dark theme surfaces ──────────────────────────────────────────────────────
+# All colors here must align with .streamlit/config.toml so the page renders
+# correctly before CSS injection (avoids a white flash on load).
+
+[theme]
+bg_page        = "#0F172A"
+bg_card        = "#262F45"
+bg_card_hover  = "#2E3954"
+bg_sidebar     = "#1E293B"
+border         = "#334155"
+border_accent  = "#475569"
+text_primary   = "#F8FAFC"
+text_secondary = "#CBD5E1"
+text_muted     = "#64748B"

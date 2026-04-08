@@ -1,0 +1,11 @@
+# .streamlit/config.toml
+# Drop this into your project's .streamlit/ folder.
+# Edit primaryColor to match the client's brand.
+
+[theme]
+base                     = "dark"
+primaryColor             = "#6366F1"          # Brand accent — change per client
+backgroundColor          = "#0F172A"          # Page bg
+secondaryBackgroundColor = "#262F45"          # Card / sidebar bg
+textColor                = "#F8FAFC"          # Primary text
+font                     = "sans serif"

@@ -1,0 +1,12 @@
+# .streamlit/config.toml
+# Streamlit baseline theme — dark surfaces are set here so the page renders
+# correctly on first load (before CSS injection from st_theme.py kicks in).
+# Edit primaryColor to match the client's brand primary color.
+
+[theme]
+base                     = "dark"
+primaryColor             = "#4F8EF7"   # Keep in sync with brand.toml [colors].primary
+backgroundColor          = "#0F1117"
+secondaryBackgroundColor = "#1C2030"
+textColor                = "#E8ECF4"
+font                     = "sans serif"
