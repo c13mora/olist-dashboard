@@ -714,7 +714,7 @@ def chart_card(title: str, fig: go.Figure, subtitle: str = "", key: str | None =
         st.markdown(header_html, unsafe_allow_html=True)
 
         # Remove Plotly's own title; tighten top margin now that title lives outside
-        fig.update_layout(title=None, margin=dict(t=8))
+        fig.update_layout(title=dict(text=""), margin=dict(t=8))
         st.plotly_chart(fig, use_container_width=True, key=key)
 
 
