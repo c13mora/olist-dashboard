@@ -38,12 +38,12 @@ series   = ["#6366F1", "#10B981", "#F59E0B", "#EC4899", "#06B6D4", "#8B5CF6"]
 # correctly before CSS injection (avoids a white flash on load).
 
 [theme]
-bg_page        = "#0F172A"
-bg_card        = "#262F45"
-bg_card_hover  = "#2E3954"
-bg_sidebar     = "#1E293B"
-border         = "#334155"
-border_accent  = "#475569"
-text_primary   = "#F8FAFC"
-text_secondary = "#CBD5E1"
-text_muted     = "#64748B"
+bg_page        = "#111827"
+bg_card        = "#1A2235"
+bg_card_hover  = "#1F2940"
+bg_sidebar     = "#0D1321"
+border         = "#253350"
+border_accent  = "#344568"
+text_primary   = "#F0F4FF"
+text_secondary = "#8B98B8"
+text_muted     = "#4E5D7A"

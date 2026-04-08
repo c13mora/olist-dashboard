@@ -76,10 +76,8 @@ kpi_row([
     {"label": "On-Time Delivery", "value": fmt_pct(kpis["on_time_pct"]),                            "delta": pct_delta(kpis["on_time_pct"],      kpis_prev["on_time_pct"]),      "help": "% orders delivered by estimated date"},
 ])
 
-st.divider()
-
 # ── Charts ────────────────────────────────────────────────────────────────────
-col_l, col_r = st.columns([3, 2], gap="large")
+col_l, col_r = st.columns([3, 2])
 
 with col_l:
     if df_monthly.empty:
@@ -106,5 +104,4 @@ with col_r:
             subtitle=f"Top 10 by {sym} revenue",
         )
 
-st.divider()
 st.caption("Built with Streamlit · DuckDB · Plotly  ·  Data: Olist Brazilian E-Commerce (Kaggle)")

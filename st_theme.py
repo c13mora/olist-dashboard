@@ -19,6 +19,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 from pathlib import Path
+from contextlib import contextmanager
 
 try:
     import tomllib
@@ -54,15 +55,15 @@ _DEFAULT_BRAND: dict = {
         "series":   ["#6366F1", "#10B981", "#F59E0B", "#EC4899", "#06B6D4", "#8B5CF6"],
     },
     "theme": {
-        "bg_page":        "#0F172A",
-        "bg_card":        "#262F45",
-        "bg_card_hover":  "#2E3954",
-        "bg_sidebar":     "#1E293B",
-        "border":         "#334155",
-        "border_accent":  "#475569",
-        "text_primary":   "#F8FAFC",
-        "text_secondary": "#CBD5E1",
-        "text_muted":     "#64748B",
+        "bg_page":        "#111827",
+        "bg_card":        "#1A2235",
+        "bg_card_hover":  "#1F2940",
+        "bg_sidebar":     "#0D1321",
+        "border":         "#253350",
+        "border_accent":  "#344568",
+        "text_primary":   "#F0F4FF",
+        "text_secondary": "#8B98B8",
+        "text_muted":     "#4E5D7A",
     },
 }
 
@@ -83,7 +84,7 @@ COLORS = {
     "accent_amber":  "#F59E0B",
     "accent_rose":   "#F43F5E",
     "accent_cyan":   "#06B6D4",
-    "seq_low":       "#1E293B",
+    "seq_low":       "#1A2235",
     "seq_high":      "#6366F1",
 }
 PALETTE = _DEFAULT_BRAND["colors"]["series"]
@@ -179,26 +180,37 @@ def apply_theme(brand: dict) -> None:
         padding-right: 2.5rem !important;
         max-width: 100% !important;
     }}
-                       
-    /* ── Metric cards ────────────────────────────────────────────────────── */
+
+    /* ── Card containers (st.container(border=True)) ─────────────────────── */
+    [data-testid="stVerticalBlockBorderWrapper"] {{
+        background: {t["bg_card"]} !important;
+        border: 1px solid {t["border"]} !important;
+        border-radius: 14px !important;
+        overflow: hidden;
+        transition: border-color 0.2s ease;
+    }}
+    [data-testid="stVerticalBlockBorderWrapper"]:hover {{
+        border-color: {t["border_accent"]} !important;
+    }}
+
+    /* ── Metric — inherits card background; no independent frame ─────────── */
     [data-testid="metric-container"] {{
-        background: {t["bg_card"]};
-        border: 1px solid {t["border"]};
-        border-left: 3px solid {primary};
-        border-radius: 10px;
-        padding: 1rem 1.25rem;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0.6rem 0.25rem 0.25rem 0.25rem;
         min-width: 0;
     }}
 
     /* Value — prevent clipping at any viewport width */
     [data-testid="metric-container"] [data-testid="stMetricValue"] > div {{
-        font-size: clamp(1.05rem, 1.4vw, 1.55rem) !important;
+        font-size: clamp(1.1rem, 1.5vw, 1.65rem) !important;
         font-weight: 700 !important;
         white-space: nowrap;
         overflow: visible !important;
         text-overflow: unset !important;
         color: {t["text_primary"]} !important;
-        line-height: 1.25;
+        line-height: 1.2;
     }}
 
     /* Label */
@@ -212,14 +224,14 @@ def apply_theme(brand: dict) -> None:
         overflow: hidden;
         text-overflow: ellipsis;
         display: block;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.25rem;
     }}
 
     /* Delta — base size/weight; colors set in Block 3 */
     [data-testid="metric-container"] [data-testid="stMetricDelta"] {{
         font-size: 0.75rem !important;
         font-weight: 500 !important;
-        margin-top: 0.25rem;
+        margin-top: 0.2rem;
         background: transparent !important;
     }}
 
@@ -239,7 +251,7 @@ def apply_theme(brand: dict) -> None:
     /* ── Expander ────────────────────────────────────────────────────────── */
     [data-testid="stExpander"] {{
         border: 1px solid {t["border"]} !important;
-        border-radius: 10px !important;
+        border-radius: 14px !important;
         background: {t["bg_card"]} !important;
     }}
 
@@ -252,8 +264,13 @@ def apply_theme(brand: dict) -> None:
     /* ── DataFrame ───────────────────────────────────────────────────────── */
     [data-testid="stDataFrame"] {{
         border: 1px solid {t["border"]} !important;
-        border-radius: 10px !important;
+        border-radius: 14px !important;
         overflow: hidden;
+    }}
+
+    /* ── Column gaps — tighter to keep cards flush ───────────────────────── */
+    [data-testid="stHorizontalBlock"] {{
+        gap: 1rem !important;
     }}
 
     /* ── Multiselect tags ────────────────────────────────────────────────── */
@@ -451,6 +468,30 @@ def hide_chrome() -> None:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CARD PRIMITIVE
+# ─────────────────────────────────────────────────────────────────────────────
+
+@contextmanager
+def card():
+    """
+    Context manager that wraps any Streamlit content in a branded card container.
+    Uses st.container(border=True) so the card is styled globally via CSS
+    targeting [data-testid="stVerticalBlockBorderWrapper"].
+
+    Usage:
+        with card():
+            st.metric(...)
+
+        with card():
+            col_l, col_r = st.columns(2)
+            with col_l: ...
+            with col_r: ...
+    """
+    with st.container(border=True):
+        yield
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # SIDEBAR COMPONENTS
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -502,12 +543,12 @@ def render_header(
     )
 
     st.markdown(
-        f'<div style="padding:0.75rem 0 0.9rem 0;border-bottom:1px solid {border};margin-bottom:1.25rem;">'
+        f'<div style="padding:0.9rem 0 1rem 0;border-bottom:1px solid {border};margin-bottom:1.5rem;">'
         f'  <div style="display:flex;align-items:center;">'
         f'    {icon_html}'
-        f'    <span style="font-size:1.6rem;font-weight:700;color:{txt_p};line-height:1.15;">{title}</span>'
+        f'    <span style="font-size:1.85rem;font-weight:700;color:{txt_p};line-height:1.1;letter-spacing:-0.02em;">{title}</span>'
         f'  </div>'
-        f'  <div style="font-size:0.85rem;color:{txt_s};margin-top:0.3rem;line-height:1.5;">{subtitle}</div>'
+        f'  <div style="font-size:0.875rem;color:{txt_s};margin-top:0.35rem;line-height:1.5;max-width:680px;">{subtitle}</div>'
         f'  {context_html}'
         f'</div>',
         unsafe_allow_html=True,
@@ -568,12 +609,14 @@ def kpi_row(metrics: list[dict]) -> None:
     """
     cols = st.columns(len(metrics))
     for col, m in zip(cols, metrics):
-        col.metric(
-            label=m["label"],
-            value=m["value"],
-            delta=m.get("delta"),
-            help=m.get("help"),
-        )
+        with col:
+            with st.container(border=True):
+                st.metric(
+                    label=m["label"],
+                    value=m["value"],
+                    delta=m.get("delta"),
+                    help=m.get("help"),
+                )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -650,41 +693,29 @@ def svg_icon(name: str, size: int = 16, color: str | None = None) -> str:
 
 def chart_card(title: str, fig: go.Figure, subtitle: str = "", key: str | None = None) -> None:
     """
-    Render a chart with a title bar and optional subtitle caption.
-    The title is embedded in the Plotly figure (visible in fullscreen).
-    The subtitle is rendered as a styled caption below the chart, where it
-    is more readable than the previous <sup> approach.
-    A thin separator rule is drawn above to match the section_header visual rhythm.
+    Render a chart inside a branded card.
+    Title is rendered as styled HTML above the chart (not embedded in Plotly),
+    giving consistent typography regardless of chart type.
     """
     brand = st.session_state.get("brand", _DEFAULT_BRAND)
     t = brand["theme"]
 
-    fig.update_layout(
-        title=dict(
-            text=title,
-            x=0,
-            xanchor="left",
-            yanchor="top",
-            font=dict(
-                size=15,
-                color=t["text_primary"],
-                family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-            ),
-            pad=dict(l=0, t=0),
-        ),
-        margin=dict(t=48),
-    )
-    st.markdown(
-        f'<div style="height:1px;background:{t["border"]};margin-bottom:0.15rem;"></div>',
-        unsafe_allow_html=True,
-    )
-    st.plotly_chart(fig, use_container_width=True, key=key)
-    if subtitle:
-        st.markdown(
-            f'<p style="font-size:0.75rem;color:{t["text_secondary"]};'
-            f'margin-top:-0.4rem;margin-bottom:0.75rem;line-height:1.4;">{subtitle}</p>',
-            unsafe_allow_html=True,
+    with st.container(border=True):
+        # Title + optional subtitle as HTML — outside Plotly for consistent typography
+        header_html = (
+            f'<p style="font-size:0.875rem;font-weight:600;color:{t["text_primary"]};'
+            f'margin:0 0 0.1rem 0;letter-spacing:-0.01em;line-height:1.3;">{title}</p>'
         )
+        if subtitle:
+            header_html += (
+                f'<p style="font-size:0.72rem;color:{t["text_muted"]};'
+                f'margin:0 0 0.25rem 0;line-height:1.4;">{subtitle}</p>'
+            )
+        st.markdown(header_html, unsafe_allow_html=True)
+
+        # Remove Plotly's own title; tighten top margin now that title lives outside
+        fig.update_layout(title=None, margin=dict(t=8))
+        st.plotly_chart(fig, use_container_width=True, key=key)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -731,15 +762,15 @@ def plotly_layout(
         hovermode=hovermode,
         xaxis=dict(
             tickfont=dict(size=10, color=t["text_secondary"]),
-            gridcolor=t["border"],
-            linecolor=t["border"],
+            gridcolor="rgba(255,255,255,0.04)",
+            linecolor="rgba(255,255,255,0.06)",
             tickangle=0,
             showgrid=False,
             zeroline=False,
         ),
         yaxis=dict(
             tickfont=dict(size=10, color=t["text_secondary"]),
-            gridcolor=t["border"],
+            gridcolor="rgba(255,255,255,0.04)",
             linecolor="rgba(0,0,0,0)",
             showgrid=True,
             zeroline=False,

@@ -88,10 +88,9 @@ else:
         ),
         subtitle="Stacked by acquisition type — new vs returning customers",
     )
-st.divider()
 
 # ── LTV distribution + Repeat rate trend ──────────────────────────────────────
-col_l, col_r = st.columns([3, 2], gap="large")
+col_l, col_r = st.columns([3, 2])
 
 with col_l:
     if df_ltv.empty:
@@ -117,5 +116,4 @@ with col_r:
             subtitle="% of active customers with 2+ orders",
         )
 
-st.divider()
 st.caption("Built with Streamlit · DuckDB · Plotly  ·  Data: Olist Brazilian E-Commerce (Kaggle)")

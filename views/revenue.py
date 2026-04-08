@@ -87,10 +87,9 @@ else:
                            height=340, brand=brand),
         subtitle="Bars = revenue (left axis)  ·  Line = orders (right axis)",
     )
-st.divider()
 
 # ── Categories + AOV ──────────────────────────────────────────────────────────
-col_l, col_r = st.columns([3, 2], gap="large")
+col_l, col_r = st.columns([3, 2])
 
 with col_l:
     if df_categories.empty:
@@ -117,5 +116,4 @@ with col_r:
             subtitle=f"Trend in {sym}",
         )
 
-st.divider()
 st.caption("Built with Streamlit · DuckDB · Plotly  ·  Data: Olist Brazilian E-Commerce (Kaggle)")

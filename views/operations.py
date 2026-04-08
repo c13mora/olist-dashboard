@@ -101,8 +101,6 @@ with col_r:
             subtitle="All statuses · full date range",
         )
 
-st.divider()
-
 # ── On-time trend ─────────────────────────────────────────────────────────────
 if df_delivery.empty:
     section_header("On-Time Delivery Rate — Monthly Trend",
@@ -117,5 +115,4 @@ else:
         subtitle="% of orders delivered by the estimated date",
     )
 
-st.divider()
 st.caption("Built with Streamlit · DuckDB · Plotly  ·  Data: Olist Brazilian E-Commerce (Kaggle)")
