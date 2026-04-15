@@ -65,7 +65,7 @@ def get_date_range() -> tuple[str, str]:
     row = query(
         "SELECT MIN(purchase_date), MAX(purchase_date) FROM orders_enriched"
     ).iloc[0]
-    return str(row[0]), str(row[1])
+    return str(row.iloc[0]), str(row.iloc[1])
 
 
 # ─────────────────────────────────────────────────────────────────────────────
