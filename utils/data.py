@@ -28,13 +28,24 @@ def get_connection() -> duckdb.DuckDBPyConnection:
     """
     Singleton read-only DuckDB connection.
     Shared across all pages and reruns via st.cache_resource.
+
+    On first run (e.g. Streamlit Cloud), if the database doesn't exist,
+    the ingest pipeline runs automatically using Kaggle credentials stored
+    in st.secrets (KAGGLE_USERNAME and KAGGLE_KEY).
     """
     if not DB_PATH.exists():
-        st.error(
-            f"Database not found at `{DB_PATH}`.\n\n"
-            "Run `python ingest.py` first to build the database."
-        )
-        st.stop()
+        import os, sys
+        # Inject Kaggle credentials from Streamlit secrets into the environment
+        # so ingest.py (which uses os.environ / load_dotenv) can find them.
+        for key in ("KAGGLE_USERNAME", "KAGGLE_KEY"):
+            if key not in os.environ and key in st.secrets:
+                os.environ[key] = st.secrets[key]
+
+        sys.path.insert(0, str(DB_PATH.parent))
+        import ingest
+        with st.spinner("Building database for the first time — this takes about 2 minutes..."):
+            ingest.main()
+
     return duckdb.connect(str(DB_PATH), read_only=True)
 
 
