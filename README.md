@@ -1,5 +1,7 @@
 # Olist E-Commerce Analytics Dashboard
 
+**Live demo:** [olist-dashboard-bi.streamlit.app](https://olist-dashboard-bi.streamlit.app/)
+
 **Mock Client:** Olist — a Brazilian marketplace platform connecting small merchants to major e-commerce channels.
 
 **Scenario:** Olist's operations team needs a self-serve dashboard to monitor sales health, identify churn risk, and track customer lifetime value across their 100k+ order history. Previously this required manual SQL queries; the goal is a live dashboard any team member can use.
